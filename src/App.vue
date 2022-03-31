@@ -4,21 +4,46 @@
     <b-navbar-brand href="#" class="mr-5">
         DEEBU FuelHawk
     </b-navbar-brand>
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <b-collapse id="nav-collapse" is-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-btn @click="configVisible = !configVisible"
+              :class="configVisible ? null : 'collapsed'"
+              class="mx-1">
+              <b-icon icon="gear-fill" aria-hidden="true"></b-icon>
+              Settings
+          </b-btn>
+        </b-navbar-nav>
+      </b-collapse>
 </b-navbar>
-
+<div align="center" class="mb-3">
+ <b-collapse id="collapse-config" v-model="configVisible">
+   <b-card class="m-2" bg-variant="light" style="max-width: 20rem;">
+    <label for="fuel-setting">Fuel consumption </label>
+        <b-form-spinbutton id="fuel-setting" v-model="litersPerHour" min="40" max="60" 
+        :formatter-fn="consumptionString"
+        number
+        inline
+        class="mx-1"
+        ></b-form-spinbutton>
+    </b-card>
+</b-collapse>
+</div>
 <b-container>
   <b-row>
     <b-col>
-      <fuel-tank-input name="Left Tip" tankType="Tip" :dipValue="leftTipDipStick" :litersPerHour="litersPerHour" v-model="leftTipVolume"></fuel-tank-input>
+      <fuel-tank-input name="Left Tip Dipstick reading" tankType="Tip" :dipValue="leftTipDipStick" :litersPerHour="litersPerHour" v-model="leftTipVolume"></fuel-tank-input>
     </b-col>
     <b-col>
-      <fuel-tank-input name="Left Main" tankType="Main" :dipValue="leftMainDipStick" :litersPerHour="litersPerHour" v-model="leftMainVolume"></fuel-tank-input>
+      <fuel-tank-input name="Left Main Dipstick reading" tankType="Main" :dipValue="leftMainDipStick" :litersPerHour="litersPerHour" v-model="leftMainVolume"></fuel-tank-input>
+    </b-col>
+</b-row>
+<b-row>
+    <b-col>
+      <fuel-tank-input name="Right Main Dipstick reading" tankType="Main" :dipValue="rightMainDipStick" :litersPerHour="litersPerHour" v-model="rightMainVolume"></fuel-tank-input>
     </b-col>
     <b-col>
-      <fuel-tank-input name="Right Main" tankType="Main" :dipValue="rightMainDipStick" :litersPerHour="litersPerHour" v-model="rightMainVolume"></fuel-tank-input>
-    </b-col>
-    <b-col>
-      <fuel-tank-input name="Right Tip" tankType="Tip" :dipValue="rightTipDipStick" :litersPerHour="litersPerHour" v-model="rightTipVolume"></fuel-tank-input>
+      <fuel-tank-input name="Right Tip Dipstick reading" tankType="Tip" :dipValue="rightTipDipStick" :litersPerHour="litersPerHour" v-model="rightTipVolume"></fuel-tank-input>
     </b-col>
   </b-row>
   <b-row>
@@ -31,7 +56,7 @@
         <b-form-input
           size="sm"
           id="input-fuel"
-          v-model="totalVolume"
+          v-model="totalVolumeString"
           type="text"
           required
           disabled
@@ -55,7 +80,6 @@
     </b-col>
   </b-row>
 </b-container>
-
 </div>
 </template>
 
@@ -67,20 +91,17 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 
-import FuelTankValues from './components/FuelTankValues.vue'
-Vue.component('fuel-tank-input', FuelTankValues);
+import FuelTankInputSB from './components/FuelTankInputSB.vue'
+Vue.component('fuel-tank-input', FuelTankInputSB);
 export default {
   name: 'app',
-  mounted: function () {
-    this.leftTipDipStick = 12
-  },
-
   data: function () {
     return {
+          configVisible : false,
           litersPerHour : 50,
           leftTipDipStick : 12,
-          leftMainDipStick : 12,
-          rightMainDipStick : 12,
+          leftMainDipStick : 11.5,
+          rightMainDipStick : 11.5,
           rightTipDipStick : 12,
           leftTipVolume : 0,
           leftMainVolume : 0,
@@ -90,31 +111,19 @@ export default {
     },
 
     computed : {
-      ltEndurance : function () {
-        return this.enduranceForVolume(this.tipVolumeForDipStick(this.leftTipDipStick))
-      },
-
-      ltVolume : function () {
-        return this.tipVolumeForDipStick(this.leftTipDipStick) + " Liters"
-      },
       totalVolume : function () {
         return this.leftTipVolume + this.leftMainVolume + this.rightMainVolume + this.rightTipVolume
       },
+      totalVolumeString : function () {
+        var v = this.totalVolume
+        return v + " Liters"
+      },
       endurance : function () {
-        return this.enduranceForVolume(this.totalVolume)
+        return this.enduranceForVolumeString(this.totalVolume)
       }
 
     },
     methods: {
-      showAdvice : function (test){
-        this.totalVolume = test
-      },
-      getMainTanksVolume () {
-      },
-
-      getTotalVolume () {
-        return this.totalVolume
-      },
       enduranceForVolume (volume) {
         var litersPerMinute = this.litersPerHour / 60
         var minutes = volume / litersPerMinute
@@ -124,7 +133,12 @@ export default {
 
         return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes
       },
-
+      consumptionString(value){
+        return value + " lph"
+      },
+      enduranceForVolumeString (volume){
+        return this.enduranceForVolume(volume) + " @" + this.litersPerHour + " l/h"
+      }   
     }, 
   }
 </script>
