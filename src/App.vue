@@ -115,7 +115,7 @@ export default {
         return this.leftTipVolume + this.leftMainVolume + this.rightMainVolume + this.rightTipVolume
       },
       totalVolumeString : function () {
-        var v = this.totalVolume
+        var v = Math.round(this.totalVolume)
         return v + " Liters"
       },
       endurance : function () {

@@ -36,7 +36,7 @@ export default {
             return -1
         },
         volumeForDipStr : function () {
-          return this.volumeForDip + " Liters"
+          return Math.round(this.volumeForDip*2)/2 + " Liters"
         },
         endurance : function () {
             return this.enduranceForVolume(this.volumeForDip)
@@ -53,6 +53,17 @@ export default {
     created: function () {
         this.mainDipValues = [
             [0,12],
+            [1.56,24],
+            [3.46,36],
+            [5.19,48],
+            [7.13,60],
+            [8.79,72],
+            [10.89,84],
+            [12.18,96],
+        ],
+
+      this.mainTestDipValues = [
+            [0,12],
             [1,19],
             [2,26],
             [3,33],
@@ -67,6 +78,15 @@ export default {
             [12,98],
         ],
         this.tipDipValues = [
+            [0,0],
+            [1.56,12],
+            [3.94,24],
+            [6.35,36],
+            [8.91,49],
+            [11.47,60],
+            [12.18,63]
+        ]
+        this.tipTestDipValues = [
             [2,12],
             [3,18],
             [4,22],
@@ -90,7 +110,7 @@ export default {
           return 0
         }
 
-        if (dipstickValue >= count) {
+        if (dipstickValue >= this.mainDipValues[count-1][0]) {
           return this.mainDipValues[count-1][1]
         }
 
@@ -107,13 +127,13 @@ export default {
     tipVolumeForDipStick (dipstickValue) {
         var prevkey = -1; 
         var prevvalue = 0;
-        const count = this.mainDipValues.length
+        const count = this.tipDipValues.length
 
         if (dipstickValue < 0) {
           return 0
         }
 
-        if (dipstickValue >= count) {
+        if (dipstickValue >= this.tipDipValues[count-1][0]) {
           return this.tipDipValues[count-1][1]
         }
 
