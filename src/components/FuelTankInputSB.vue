@@ -1,7 +1,7 @@
 <template>
     <div>
         <label for="fuel-tip-sb">{{name}}</label>
-        <b-form-spinbutton id="fuel-tip-sb" v-model="lDipValue" min="0" max="12" step="0.5"
+        <b-form-spinbutton id="fuel-tip-sb" v-model="lDipValue" min="0" :max=maxDipValue step="0.5"
         v-bind:value="value" v-on:input="$emit('input', volumeForDip)"
         number
         ></b-form-spinbutton>
@@ -15,25 +15,40 @@
 export default {
     mounted : function () {
       this.$emit('input', this.volumeForDip)
-    },
+      },
     name: 'Fuel-Tank-Input-SB',
+    
+
     props: {
         value : Number,
         name : String,
         dipValue : Number,
         tankType : String,
         litersPerHour : Number,
+        dipStickType : String, 
     },
 
     computed: {
+        maxDipValue : function () {
+          var valuesArray = this.mainDipValues
+
+          if (this.tankType == "Tip") {
+          valuesArray = this.tipDipValues
+            if (this.dipStickType == "FuelFinger"){
+              valuesArray = this.tipDipValuesFuelFinger
+            }
+          } else {
+            valuesArray = this.mainDipValues
+            if (this.dipStickType == "FuelFinger") {
+              valuesArray = this.mainDipValuesFuelFinger
+            }
+          }
+
+          const count = valuesArray.length
+          return valuesArray[count-1][0]
+        },
         volumeForDip : function () {
-            if (this.tankType == "Tip"){
-                return this.tipVolumeForDipStick(this.lDipValue)
-            }
-            else if (this.tankType == "Main"){
-                return this.mainVolumeForDipStick(this.lDipValue)
-            }
-            return -1
+            return this.volumeForDipStick(this.lDipValue)
         },
         volumeForDipStr : function () {
           return Math.round(this.volumeForDip*2)/2 + " Liters"
@@ -45,9 +60,7 @@ export default {
 
     data() {
       return {
-          lDipValue : this.dipValue,
-          mainDipValues : [],
-          tipDipValues : []
+          lDipValue : this.dipValue
         }
     },
     created: function () {
@@ -61,21 +74,15 @@ export default {
             [10.89,84],
             [12.18,96],
         ],
-
-      this.mainTestDipValues = [
+        this.mainDipValuesFuelFinger = [
             [0,12],
-            [1,19],
-            [2,26],
-            [3,33],
-            [4,41],
-            [5,48],
-            [6,54],
-            [7,62],
-            [8,69],
-            [9,76],
-            [10,82],
-            [11,90],
-            [12,98],
+            [2.25,24],
+            [5,36],
+            [7.5,48],
+            [10.3,60],
+            [12.7,72],
+            [15.73,84],
+            [17.6,96],
         ],
         this.tipDipValues = [
             [0,0],
@@ -85,68 +92,55 @@ export default {
             [8.91,49],
             [11.47,60],
             [12.18,63]
-        ]
-        this.tipTestDipValues = [
-            [2,12],
-            [3,18],
-            [4,22],
-            [5,26],
-            [6,31],
-            [7,37],
-            [8,42],
-            [9,48],
-            [10,51],
-            [11,58],
-            [12,61]
+        ],
+        this.tipDipValuesFuelFinger = [
+            [0,0],
+            [2.25,12],
+            [5.7,24],
+            [9.17,36],
+            [12.87,49],
+            [16.57,60],
+            [17.6,63]
         ]
     },
     methods : {
-      mainVolumeForDipStick (dipstickValue) {
+      volumeForDipStick (dipstickValue) {
         var prevkey = -1; 
         var prevvalue = 0;
-        const count = this.mainDipValues.length
+        var valuesArray = this.mainDipValues
+
+       if (this.tankType == "Tip") {
+          valuesArray = this.tipDipValues
+          if (this.dipStickType == "FuelFinger"){
+              valuesArray = this.tipDipValuesFuelFinger
+          }
+       } else {
+          valuesArray = this.mainDipValues
+          if (this.dipStickType == "FuelFinger") {
+            valuesArray = this.mainDipValuesFuelFinger
+          }
+       }
+
+        const count = valuesArray.length
 
         if (dipstickValue < 0) {
           return 0
         }
 
-        if (dipstickValue >= this.mainDipValues[count-1][0]) {
-          return this.mainDipValues[count-1][1]
+        if (dipstickValue >= valuesArray[count-1][0]) {
+          return valuesArray[count-1][1]
         }
 
         for (var i = 0; i < count; i++) {
-            var key = this.mainDipValues[i][0]                          
-            var value = this.mainDipValues[i][1]              
+            var key = valuesArray[i][0]                          
+            var value = valuesArray[i][1]              
             if (key >= dipstickValue) {
               return prevvalue + (dipstickValue - prevkey)*(value - prevvalue)/(key - prevkey)
             }
             prevkey = key; prevvalue = value  
         }
       },
-
-    tipVolumeForDipStick (dipstickValue) {
-        var prevkey = -1; 
-        var prevvalue = 0;
-        const count = this.tipDipValues.length
-
-        if (dipstickValue < 0) {
-          return 0
-        }
-
-        if (dipstickValue >= this.tipDipValues[count-1][0]) {
-          return this.tipDipValues[count-1][1]
-        }
-
-        for (var i = 0; i < count; i++) {
-            var key = this.tipDipValues[i][0]                          
-            var value = this.tipDipValues[i][1]              
-            if (key >= dipstickValue) {
-              return prevvalue + (dipstickValue - prevkey)*(value - prevvalue)/(key - prevkey)
-            }
-            prevkey = key; prevvalue = value  
-        }
-    },  
-    enduranceForVolume (volume) {
+      enduranceForVolume (volume) {
         var litersPerMinute = this.litersPerHour / 60
         var minutes = volume / litersPerMinute
         var hours = Math.floor(minutes/60)
