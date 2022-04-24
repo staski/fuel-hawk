@@ -5,7 +5,7 @@
         v-bind:value="value" v-on:input="$emit('input', volumeForDip)"
         number
         ></b-form-spinbutton>
-        <p>Available Fuel: {{ volumeForDipStr }},<br> 
+        <p>Fuel: {{ volumeForDipStr }},<br> 
         Endurance: {{ endurance }}</p>
     </div>
 </template>

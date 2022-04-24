@@ -19,41 +19,44 @@
 <div align="center" class="mb-3">
  <b-collapse id="collapse-config" v-model="configVisible">
    <b-card class="m-2" bg-variant="light" style="max-width: 20rem">
-    <label for="fuel-setting">Fuel consumption </label>
+    <b-form-group id="fuel-setting-fg"
+      label="Fuel consumption"
+      label-for="fuel-setting"
+    >
     <b-form-spinbutton id="fuel-setting" v-model="litersPerHour" min="40" max="60" 
         :formatter-fn="consumptionString"
         number
         inline
         class="mx-1"
     ></b-form-spinbutton>
+   </b-form-group>
     <b-form-radio-group
+        class="mt-2"
         id="type-setting"
         v-model="dipsticktype"
         name="radio-sub-component"
-        class="m-2"
     >
-      <b-form-radio v-model="dipsticktype" name="fuelhawk" value="FuelHawk"> Fuel Hawk</b-form-radio> 
-      <b-form-radio v-model="dipsticktype" name="fuelfinger" value="FuelFinger"> Fuel Finger</b-form-radio> 
+      <b-form-radio name="fuelhawk" value="FuelHawk"> Fuel Hawk</b-form-radio> 
+      <b-form-radio name="fuelfinger" value="FuelFinger"> Fuel Finger</b-form-radio> 
     </b-form-radio-group>
-    </b-card>
-   
+    </b-card>   
 </b-collapse>
 </div>
 <b-container>
   <b-row>
     <b-col>
-      <fuel-tank-input name="Left Tip Dipstick reading" :dipStickType="dipsticktype" tankType="Tip" :dipValue="leftTipDipStick" :litersPerHour="litersPerHour" v-model="leftTipVolume"></fuel-tank-input>
+      <fuel-tank-input name="Left Tip" :dipStickType="dipsticktype" tankType="Tip" :dipValue="leftTipDipStick" :litersPerHour="litersPerHour" v-model="leftTipVolume"></fuel-tank-input>
     </b-col>
     <b-col>
-      <fuel-tank-input name="Left Main Dipstick reading" :dipStickType="dipsticktype" tankType="Main" :dipValue="leftMainDipStick" :litersPerHour="litersPerHour" v-model="leftMainVolume"></fuel-tank-input>
+      <fuel-tank-input name="Left Main" :dipStickType="dipsticktype" tankType="Main" :dipValue="leftMainDipStick" :litersPerHour="litersPerHour" v-model="leftMainVolume"></fuel-tank-input>
     </b-col>
 </b-row>
 <b-row>
     <b-col>
-      <fuel-tank-input name="Right Main Dipstick reading" :dipStickType="dipsticktype" tankType="Main" :dipValue="rightMainDipStick" :litersPerHour="litersPerHour" v-model="rightMainVolume"></fuel-tank-input>
+      <fuel-tank-input name="Right Main" :dipStickType="dipsticktype" tankType="Main" :dipValue="rightMainDipStick" :litersPerHour="litersPerHour" v-model="rightMainVolume"></fuel-tank-input>
     </b-col>
     <b-col>
-      <fuel-tank-input name="Right Tip Dipstick reading" :dipStickType="dipsticktype" tankType="Tip" :dipValue="rightTipDipStick" :litersPerHour="litersPerHour" v-model="rightTipVolume"></fuel-tank-input>
+      <fuel-tank-input name="Right Tip" :dipStickType="dipsticktype" tankType="Tip" :dipValue="rightTipDipStick" :litersPerHour="litersPerHour" v-model="rightTipVolume"></fuel-tank-input>
     </b-col>
   </b-row>
   <b-row>
