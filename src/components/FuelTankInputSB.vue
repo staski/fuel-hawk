@@ -16,9 +16,9 @@ export default {
     mounted : function () {
       this.$emit('input', this.volumeForDip)
       },
+
     name: 'Fuel-Tank-Input-SB',
     
-
     props: {
         value : Number,
         name : String,
@@ -61,7 +61,7 @@ export default {
     data() {
       return {
           lDipValue : this.dipValue
-        }
+      }
     },
     created: function () {
         this.mainDipValues = [
@@ -102,6 +102,14 @@ export default {
             [16.57,60],
             [17.6,63]
         ]
+    },
+    watch : {
+      dipStickType(){
+       if (this.lDipValue > this.maxDipValue){
+          this.lDipValue = this.maxDipValue
+       }
+       this.$emit('input', this.volumeForDip)
+      }
     },
     methods : {
       volumeForDipStick (dipstickValue) {
@@ -148,7 +156,7 @@ export default {
         minutes = Math.round(minutes)
 
         return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes
-    },
-  }
+      },
+    }
 }
 </script>

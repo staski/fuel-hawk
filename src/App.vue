@@ -2,7 +2,7 @@
  <div>
 <b-navbar toggleable="sm" variant="dark" type="dark">
     <b-navbar-brand href="#" class="mr-5">
-        DEEBU FuelHawk
+        DEEBU {{this.dipsticktype}}
     </b-navbar-brand>
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
@@ -98,14 +98,16 @@
 
 <script>
 import Vue from 'vue';
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import { BootstrapVue, BIcon, BIconGearFill } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
-Vue.use(BootstrapVueIcons)
+Vue.component('BIcon', BIcon)
+Vue.component('BIconGearFill', BIconGearFill)
 
 import FuelTankInputSB from './components/FuelTankInputSB.vue'
 Vue.component('fuel-tank-input', FuelTankInputSB);
+
 export default {
   name: 'app',
   data: function () {
